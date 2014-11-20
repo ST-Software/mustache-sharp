@@ -23,7 +23,8 @@ namespace Mustache
         /// <param name="writer">The writer to write the output to.</param>
         /// <param name="arguments">The arguments passed to the tag.</param>
         /// <param name="context">Extra data passed along with the context.</param>
-        public override void GetText(TextWriter writer, Dictionary<string, object> arguments, Scope context)
+        /// <param name="scope"></param>
+        public override void GetText(TextWriter writer, Dictionary<string, object> arguments, Scope context, Scope scope)
         {
             writer.Write(Environment.NewLine);
         }

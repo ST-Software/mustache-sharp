@@ -110,15 +110,26 @@ namespace Mustache
             if (!_regexLookup.TryGetValue(definition.Name, out regex))
             {
                 List<string> matches = new List<string>();
+                
+                // register inline before key regex
+                foreach (TagDefinition globalDefinition in _tagLookup.Values)
+                {
+                    if (!globalDefinition.IsContextSensitive && globalDefinition.IsInline)
+                    {
+                        matches.Add(getInlineTagRegex(globalDefinition));
+                    }
+                }
+
                 matches.Add(getKeyRegex());
                 matches.Add(getCommentTagRegex());
                 foreach (string closingTag in definition.ClosingTags)
                 {
                     matches.Add(getClosingTagRegex(closingTag));
                 }
+
                 foreach (TagDefinition globalDefinition in _tagLookup.Values)
                 {
-                    if (!globalDefinition.IsContextSensitive)
+                    if (!globalDefinition.IsContextSensitive && !globalDefinition.IsInline)
                     {
                         matches.Add(getTagRegex(globalDefinition));
                     }
@@ -176,6 +187,26 @@ namespace Mustache
             return regexBuilder.ToString();
         }
 
+        private static string getInlineTagRegex(TagDefinition definition)
+        {
+            StringBuilder regexBuilder = new StringBuilder();
+            regexBuilder.Append(@"(?<open>((?<name>");
+            regexBuilder.Append(definition.Name);
+            regexBuilder.Append(@")");
+            foreach (TagParameter parameter in definition.Parameters)
+            {
+                regexBuilder.Append(@"(\s+?");
+                regexBuilder.Append(@"(?<argument>(");
+                regexBuilder.Append(RegexHelper.Argument);
+                regexBuilder.Append(@")))");
+                if (!parameter.IsRequired)
+                {
+                    regexBuilder.Append("?");
+                }
+            }
+            regexBuilder.Append(@"\s*?))");
+            return regexBuilder.ToString();
+        }
         private string getUnknownTagRegex()
         {
             return @"(?<unknown>(#.*?))";

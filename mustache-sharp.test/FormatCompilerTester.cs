@@ -1330,7 +1330,7 @@ Item Number: foo<br />
                 return new TagParameter[] { new TagParameter("param") { IsRequired = false, DefaultValue = 123 } };
             }
 
-            public override void GetText(TextWriter writer, Dictionary<string, object> arguments, Scope contextScope)
+            public override void GetText(TextWriter writer, Dictionary<string, object> arguments, Scope contextScope, Scope scope)
             {
                 writer.Write(arguments["param"]);
             }
@@ -1555,5 +1555,37 @@ Odd
         }
 
         #endregion
+
+        #region Inline tags
+        
+        [TestMethod]
+        public void TestCompile_InlineTag()
+        {
+            FormatCompiler compiler = new FormatCompiler();
+            compiler.RegisterTag(new TestInlineTag(), false);
+            var template = compiler.Compile("{{testinlinetag 'Names'}}");
+            var result = template.Render(new { Names = "aaa", testinlinetag = "bbb"});
+            Assert.AreEqual("aaa", result);
+        }
+
+        [TestMethod]
+        public void TestCompile_TranslateTag()
+        {
+            FormatCompiler compiler = new FormatCompiler();
+            compiler.RegisterTag(new TestInlineTag2(), false);
+            var template = compiler.Compile("{{translate 'data.Names'}}");
+            var result = template.Render(
+                new {
+                    data = new Dictionary<string, object>
+                    {
+                        {"Names", "aaa"},
+                        {"testinlinetag", "bbb"}
+                    }
+                });
+            Assert.AreEqual("aaa", result);
+        }
+        #endregion
     }
+
+    
 }

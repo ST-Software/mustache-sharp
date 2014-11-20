@@ -130,6 +130,15 @@ namespace Mustache
             get { return GetChildTags(); }
         }
 
+
+        /// <summary>
+        /// States if the tag is inline tag or block tag.
+        /// </summary>
+        public virtual bool IsInline 
+        {
+            get { return false; }
+        }
+
         /// <summary>
         /// Specifies which tags are scoped under the current tag.
         /// </summary>
@@ -173,7 +182,8 @@ namespace Mustache
         /// <param name="writer">The text writer to write to.</param>
         /// <param name="arguments">The arguments passed to the tag.</param>
         /// <param name="context">The data associated to the context.</param>
-        public virtual void GetText(TextWriter writer, Dictionary<string, object> arguments, Scope context)
+        /// <param name="keyScope"></param>
+        public virtual void GetText(TextWriter writer, Dictionary<string, object> arguments, Scope context, Scope keyScope)
         {
         }
 

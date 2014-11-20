@@ -34,7 +34,7 @@ namespace Mustache
             {
                 arguments = _arguments.GetArguments(scope, context);
             }            
-            _definition.GetText(writer, arguments, context);
+            _definition.GetText(writer, arguments, context, scope);
         }
     }
 }
